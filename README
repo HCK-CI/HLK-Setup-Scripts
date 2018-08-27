@@ -13,7 +13,7 @@ Examples:
 qemu-img create -f qcow2 images/HCK.qcow2 500G
 qemu-img create -f qcow2 images/HLK1709.qcow2 500G
 ```
-2. Set a VirtHCK setup with the needed changes: 
+2. Set a VirtHCK setup with the needed changes:
 for HCK prepare a Windows 2012 installation ISO
 for HLK use Windows 2012R2 installation ISO
 in the hck_setup.cfg file edit
@@ -23,7 +23,7 @@ Set UNSAFE_CACHE to on for faster VM installation.
 3. Run VirtHCK to install Windows controller:
 for example:
 ```
-sudo ./hck.sh -id 10 -st_image images/HCK.qcow2
+sudo ./hck.sh ci_mode -st_image images/HLK1709.qcow2 -id 12 -qemu_bin /usr/bin/qemu-system-x86_64 st -world_net_device e1000e -ctrl_net_device e1000e -file_transfer_device e1000e
 ```
 
 4. Activate windows
@@ -51,7 +51,7 @@ HLK-Setup-Scripts/Kits/HLK1803Setup.exe
 
 8. Copy the scripts folder to C:\ and set the flags on both auto.bat, auto-client.bat:
 KIT should be HLK or HCK
-and HLKKITVER should be 1607, 1709 ... 
+and HLKKITVER should be 1607, 1709 ...
 
 9. Run the scripts as administrator from the local path.
 make sure the selected kit installation placed correctly
@@ -89,21 +89,21 @@ qemu-img create -f qcow2 -b HCK.raw HCK-snapshot.qcow2
 
 14. Run clients machines in VirtHCK to install clients:
 ```
-sudo ./hck.sh ci_mode -st_image images/HCK-snapshot.qcow2 -id 13 -c1_image images/HCK_c1_Win81x64.raw -c2_image images/HCK_c2_Win81x64.raw c1
-sudo ./hck.sh ci_mode -st_image images/HCK-snapshot.qcow2 -id 13 -c1_image images/HCK_c1_Win81x64.raw -c2_image images/HCK_c2_Win81x64.raw c2
+sudo ./hck.sh ci_mode -c1_image images/HLK1709-c1-Win10x64.qcow2 -id 12 -qemu_bin /usr/bin/qemu-system-x86_64 c1 -ctrl_net_device e1000e
+sudo ./hck.sh ci_mode -c2_image images/HLK1709-c2-Win10x64.qcow2 -id 12 -qemu_bin /usr/bin/qemu-system-x86_64 c2 -ctrl_net_device e1000e
 ```
 
 15. Activate clients
 
 16. Run studio machine
 ```
-sudo ./hck.sh ci_mode -st_image images/HCK-snapshot.qcow2 -id 13 -c1_image images/HCK_c1_Win81x64.raw -c2_image images/HCK_c2_Win81x64.raw -qemu_bin qemu-kvm st
+sudo ./hck.sh ci_mode -st_image images/HCK-snapshot.qcow2 -id 12 -c1_image images/HCK_c1_Win81x64.raw -c2_image images/HCK_c2_Win81x64.raw -qemu_bin qemu-kvm st
 ```
 
 17. Copy HLK-Setup-Scripts to shared folder and copy back to C:\ in the clients
 path to studio is: //STUDIO/
 
-18. Make sure auto-client.bat flags are correct 
+18. Make sure auto-client.bat flags are correct
 The certificate path and HLK/HCK flag
 
 19. And run auto-client.bat  as administrator

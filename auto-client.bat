@@ -120,11 +120,6 @@ GOTO :B
 :SetupEnded
 echo %KIT% client setup has finished...
 
-echo Adding certiicate to Root store...
-certutil -enterprise -f -v -AddStore root %~dp0Certificate\%CERTIFICATE%
-echo Adding certiicate to TrustedPublisher store...
-certutil -enterprise -f -v -addstore trustedpublisher %~dp0Certificate\%CERTIFICATE%
-
 shutdown -r -t 0
 goto :eof
 

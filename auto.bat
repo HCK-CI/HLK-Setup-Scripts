@@ -1,6 +1,6 @@
 setlocal EnableDelayedExpansion
 SET PASSWORD=Qum5net.
-SET "FILTERS=https://sysdev.microsoft.com/member/SubmissionWizard/LegalExemptions/HCKFilterUpdates.cab"
+SET "FILTERS=https://go.microsoft.com/fwlink/?linkid=875139"
 SET KIT=HLK
 :: SET KIT=HCK
 SET HLKKITVER=1709

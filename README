@@ -1,134 +1,11 @@
 # HLK-Setup-Scripts
+
 These script will help you configure HLK/HCK setup to be used with AutoHCK.
 This guide will help you set up and configure HLK/HCK test environment to be used with AutoHCK
 
-
-## Installation guide
-1. Create a QEMU VM image for the Controller:
-```
-qemu-img create -f qcow2 images/<KIT><HLK-VERSION>.qcow2 500G
-```
-Examples:
-```
-qemu-img create -f qcow2 images/HCK.qcow2 500G
-qemu-img create -f qcow2 images/HLK1709.qcow2 500G
-```
-2. Set a VirtHCK setup with the needed changes:
-for HCK prepare a Windows 2012 installation ISO
-for HLK use Windows 2012R2 installation ISO
-in the hck_setup.cfg file edit
-set STUDIO_EXTRA to the ISO path: " -cdrom /home/hck-ci/Isos/WinIso.iso"
-Set UNSAFE_CACHE to on for faster VM installation.
-
-3. Run VirtHCK to install Windows controller:
-for example:
-```
-sudo ./hck.sh ci_mode -st_image images/HLK1709.qcow2 -id 12 -qemu_bin /usr/bin/qemu-system-x86_64 st -world_net_device e1000e -ctrl_net_device e1000e -file_transfer_device e1000e
-```
-
-4. Activate windows
-
-5. Activate smb share with "net use X: \\192.168.101.1\qemu"
-
-6. Copy the HLK-Setup-Scripts folder into the SMB_SHARE folder in VirtHCK
-
-7. If you have access to offline HCK/HCK installation also copy them:
-they should be in the following structure:
-
-HLK-Setup-Scripts/Kits/HCK/HCKSetup.exe
-HLK-Setup-Scripts/Kits/HLK1607/HLKSetup.exe
-HLK-Setup-Scripts/Kits/HLK1703/HLKSetup.exe
-HLK-Setup-Scripts/Kits/HLK1709/HLKSetup.exe
-HLK-Setup-Scripts/Kits/HLK1803/HLKSetup.exe
-
-if you don't have access online installers will should look like this:
-
-HLK-Setup-Scripts/Kits/HCK/HCKSetup.exe
-HLK-Setup-Scripts/Kits/HLK1607Setup.exe
-HLK-Setup-Scripts/Kits/HLK1703Setup.exe
-HLK-Setup-Scripts/Kits/HLK1709Setup.exe
-HLK-Setup-Scripts/Kits/HLK1803Setup.exe
-
-8. Copy the scripts folder to C:\ and set the flags on both auto.bat, auto-client.bat:
-KIT should be HLK or HCK
-and HLKKITVER should be 1607, 1709 ...
-
-9. Run the scripts as administrator from the local path.
-make sure the selected kit installation placed correctly
-before running remove current.txt file from script folder if exists
-The script will first try to find the offline installation and if not found will try to install the online.
-Note: This might take a long time.
-
-
-10. Shutdown controller machine
-
-11. Create two QEMU VM images for the HCK Clients with the following names:
-```
-qemu-img create -f qcow2 images/<KIT><HLK-VERSION>_c1_<OS_NAME><OS_ARCH>.qcow2 500G
-qemu-img create -f qcow2 images/<KIT><HLK-VERSION>_c2_<OS_NAME><OS_ARCH>.qcow2 500G
-```
-for example:
-```
-qemu-img create -f qcow2 images/HCK_c1_Win8x64.qcow2 500G
-qemu-img create -f qcow2 images/HCK_c2_Win8x64.qcow2 500G
-```
-```
-qemu-img create -f qcow2 images/HLK1803_c1_Win10x86.qcow2 500G
-qemu-img create -f qcow2 images/HLK1803_c2_Win10x86.qcow2 500G
-```
-
-12. Edit VirtHCK hck_setup.cfg file with the4
-```
-CDROM_CLIENT="/home/hck-ci/Prometheus/Isos/Win81x64.iso"
-```
-
-13. Create a snapshot file of the Controller to keep it clean when installing clients
-```
-qemu-img create -f qcow2 -b HCK.raw HCK-snapshot.qcow2
-```
-
-14. Run clients machines in VirtHCK to install clients:
-```
-sudo ./hck.sh ci_mode -c1_image images/HLK1709-c1-Win10x64.qcow2 -id 12 -qemu_bin /usr/bin/qemu-system-x86_64 c1 -ctrl_net_device e1000e
-sudo ./hck.sh ci_mode -c2_image images/HLK1709-c2-Win10x64.qcow2 -id 12 -qemu_bin /usr/bin/qemu-system-x86_64 c2 -ctrl_net_device e1000e
-```
-
-15. Activate clients
-
-16. Run studio machine
-```
-sudo ./hck.sh ci_mode -st_image images/HCK-snapshot.qcow2 -id 12 -c1_image images/HCK_c1_Win81x64.raw -c2_image images/HCK_c2_Win81x64.raw -qemu_bin qemu-kvm st
-```
-
-17. Copy HLK-Setup-Scripts to shared folder and copy back to C:\ in the clients
-path to studio is: //STUDIO/
-
-18. Make sure auto-client.bat flags are correct
-The certificate path and HLK/HCK flag
-
-19. And run auto-client.bat  as administrator
-before running: remove current.txt file from script folder if exists
-Note: This will take a long time
-
-19. After the script is done open HLK/HCK Studio, click on Configuration and make sure the clients showed up
-
-20. On Windows Server clients remove GUI
-Windows server clients are required to run as Core,
-remove gui using the command:
-```
-powershell "Remove-WindowsFeature Server-Gui-Shell, Server-Gui-Mgmt-Infra -Restart"
-```
-
-21. Turn off all machines
-IMPORTANT: Do not turn on studio without snapshot when clients are up
-doing so will prevent from AutoHCK to work correctly.
-
-22. Save and archive a copy of this setup
-
-23. To create more clients for the same studio, redo from step 11 with other clients
-
 ## Compatibility table
 
+------------------------------------
 | Studio  | Studio OS | Clients    |
 ------------------------------------
 | HCK     | Win2012   |            |
@@ -151,9 +28,123 @@ doing so will prevent from AutoHCK to work correctly.
 | HLK1803 | Win2012R2 |            |
 |         |           | Win10 1803 |
 ------------------------------------
+| HLK1809 | Win2012R2 |            |
+|         |           | Win10 1809 |
+|         |           | Win2016    |
+------------------------------------
 
-## Script breakdown
-To manual installion or to understand what it does, follow this:
+## Installation guide
+
+1. Clone a new VirtHCK and these script inside the SMB share folder:
+   ```
+   git clone https://github.com/daynix/VirtHCK.git
+   cd VirtHCK/SMB_SHARE
+   git clone https://github.com/HCK-CI/HLK-Setup-Scripts
+   ```
+
+2. If you already have a controller image and only want to create new clients jump to step 14:
+
+3. If you have access to offline HCK/HCK installation also copy them:
+   they should be in the following structure:
+
+   - HLK-Setup-Scripts/Kits/HCK/HCKSetup.exe
+   - HLK-Setup-Scripts/Kits/HLK1607/HLKSetup.exe
+   - HLK-Setup-Scripts/Kits/HLK1703/HLKSetup.exe
+   - HLK-Setup-Scripts/Kits/HLK1709/HLKSetup.exe
+   - HLK-Setup-Scripts/Kits/HLK1803/HLKSetup.exe
+   - HLK-Setup-Scripts/Kits/HLK1809/HLKSetup.exe
+
+  if you don't have access, copy the the online installers will should look like this:
+
+  - HLK-Setup-Scripts/Kits/HCK/HCKSetup.exe
+  - HLK-Setup-Scripts/Kits/HLK1607Setup.exe
+  - HLK-Setup-Scripts/Kits/HLK1703Setup.exe
+  - HLK-Setup-Scripts/Kits/HLK1709Setup.exe
+  - HLK-Setup-Scripts/Kits/HLK1803Setup.exe
+  - HLK-Setup-Scripts/Kits/HLK1809Setup.exe
+   
+4. Inside the images folder create a QEMU VM image for the Controller:
+   ```
+   qemu-img create -f qcow2 images/<KIT><HLK-VERSION>.qcow2 300G
+   ```
+   Examples:
+   ```
+   qemu-img create -f qcow2 images/HCK.qcow2 500G
+   qemu-img create -f qcow2 images/HLK1709.qcow2 500G
+   ```
+
+5. Edit HLK-Setup-Scripts bat files:
+   update HLKKITVER in auto.bat and KIT (to HCK or HLK) both in auto.bat and auto_client.bat 
+
+6. Set a VirtHCK setup with the needed changes:
+   for Windows 8.1 / Windows Server 2012R2 or earlier (HCK): prepare a Windows 2012 installation ISO
+   for Windows 10 / Windows Server 2016 or newer (HLK): prepare a Windows 2012R2 installation ISO
+   in the hck_setup.cfg file edit
+   set STUDIO_EXTRA to the ISO path: " -cdrom /home/hck-ci/Isos/WinIso.iso"
+   Set UNSAFE_CACHE to on for faster VM installation.
+
+7. Run VirtHCK to install Windows controller:
+   ```
+   sudo ./hck.sh ci_mode -st_image images/<KIT><HLK-VERSION>.qcow2 st
+   ```
+
+8. Activate smb share with "net use X: \\192.168.101.1\qemu"
+
+9. Copy the scripts folder from X:\ to C:\
+
+10. Run the scripts as administrator from the local path.
+   make sure the selected kit installation placed correctly
+   before running remove current.txt file from script folder if exists
+   The script will first try to find the offline installation and if not found will try to install the online.
+   Note: This might take a long time.
+
+11. Copy auto_client.bat file to the studio share
+
+12. Shutdown controller machine
+
+13. Create a snapshot image of the controller:
+   ```
+   qemu-img create -f qcow2 -b images/HLK1803.qcow2 HLK1803-snapshot.qcow2
+   ```
+
+14. Create two QEMU VM images for the HCK Clients with the following names:
+   ```
+   qemu-img create -f qcow2 images/<KIT><HLK-VERSION>_C1_<OS_NAME><OS_ARCH>.qcow2 300G
+   qemu-img create -f qcow2 images/<KIT><HLK-VERSION>_C2_<OS_NAME><OS_ARCH>.qcow2 300G
+   ```
+   for example:
+   ```
+   qemu-img create -f qcow2 images/HCK_C1_Win8x64.qcow2 300G
+   qemu-img create -f qcow2 images/HCK_C2_Win8x64.qcow2 300G
+
+   qemu-img create -f qcow2 images/HLK1803_C1_Win10x86.qcow2 300G
+   qemu-img create -f qcow2 images/HLK1803_C2_Win10x86.qcow2 300G
+   ```
+
+15. Update VirtHCK hck_setup.cfg file with Iso file path:
+   ```
+   CDROM_CLIENT="/home/hck-ci/Prometheus/Isos/Win81x64.iso"
+   ```
+
+16. Run studio and clients machines in VirtHCK to install clients:
+   ```
+   sudo ./hck.sh ci_mode -st_image images/HCK-snapshot.qcow2 st
+   sudo ./hck.sh ci_mode -c1_image images/HLK1709-C1-Win10x64.qcow2 c1
+   sudo ./hck.sh ci_mode -c2_image images/HLK1709-C2-Win10x64.qcow2 c2
+   ```
+
+17. Install the Windows on the clients.
+    Windows server clients should be installed without GUI.
+
+18. Locate and copy auto_client.bat from the studio share, run it as administrator.
+   Make sure no current.txt exists with the auto_client.bat file before running.
+
+19. Shutdown all three machines.
+
+20. Delete the snapshot file and archive copies of the studio (if needed) and the two clients
+
+## Scripts breakdown
+To manual installion or to understand what the  bat file does, follow this:
 
 ### steps for both studio and clients
 1. Disable Server manager popup on startup
@@ -296,9 +287,3 @@ shutdown -r -t 0
 run \\STUDIO\HLKInstall\Client\setup.cmd for HLK
 or  \\STUDIO\HCKInstall\Client\setup.exe fro HCK
 
-
-4. Add certificate to the Root store and Trusted providers
-```
-certutil -enterprise -f -v -AddStore root certificate.cer
-certutil -enterprise -f -v -addstore trustedpublisher certificate.cer
-```

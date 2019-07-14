@@ -56,6 +56,7 @@ This guide will help you set up and configure HLK/HCK test environment to be use
    - HLK-Setup-Scripts/Kits/HLK1709/HLKSetup.exe
    - HLK-Setup-Scripts/Kits/HLK1803/HLKSetup.exe
    - HLK-Setup-Scripts/Kits/HLK1809/HLKSetup.exe
+   - HLK-Setup-Scripts/Kits/HLK1903/HLKSetup.exe
 
   if you don't have access, copy the the online installers will should look like this:
 
@@ -65,6 +66,7 @@ This guide will help you set up and configure HLK/HCK test environment to be use
   - HLK-Setup-Scripts/Kits/HLK1709Setup.exe
   - HLK-Setup-Scripts/Kits/HLK1803Setup.exe
   - HLK-Setup-Scripts/Kits/HLK1809Setup.exe
+  - HLK-Setup-Scripts/Kits/HLK1903Setup.exe
    
 4. Inside the images folder create a QEMU VM image for the Controller:
    ```

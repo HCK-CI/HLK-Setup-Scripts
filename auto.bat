@@ -150,27 +150,6 @@ shutdown -r -t 0
 goto :eof
 
 :six
-echo seven >%~dp0current.txt
-
-echo Installing and Telnet server...
-powershell "Add-WindowsFeature Telnet-Server -Restart"
-
-if %DEBUG% equ true pause
-shutdown -r -t 0
-goto :eof
-
-:seven
-echo eight >%~dp0current.txt
-
-echo Enabling and starting Telnet Srever...
-sc config TlntSvr start= auto
-net start TlntSvr
-
-if %DEBUG% equ true pause
-shutdown -r -t 0
-goto:eof
-
-:eight
 ::Remove script from Run key
 reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" /v %~n0 /f
 del %~dp0current.txt

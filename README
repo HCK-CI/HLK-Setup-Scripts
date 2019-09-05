@@ -243,18 +243,7 @@ run the HCKSetup.exe or HLKSetup.exe file provided
 powershell "Remove-WindowsFeature Server-Gui-Shell, Server-Gui-Mgmt-Infra -Restart"
 ```
 
-6. Install Telnet Server
-```
-powershell "Add-WindowsFeature Telnet-Server -Restart"
-```
-
-7. Start and enable telnet server
-```
-sc config TlntSvr start= auto
-net start TlntSvr
-```
-
-8. Update HCKFilters
+6. Update HCKFilters
 ```
 bitsadmin /transfer "Downloading Filters" "%FILTERS%" "%~dp0FilterUpdates.cab"
 expand -i "%~dp0FilterUpdates.cab" -f:UpdateFilters.sql "%DTMBIN%\"

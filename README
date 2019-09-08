@@ -265,9 +265,9 @@ shutdown /r /t 0
 ```
 
 2. Configure Network adapter
-rename the device with mac address ending with "CC-CC" to "MessageDevice" and give it a static ip of  192.168.100.[x] and netmask of 255.255.255.0 ([x] replace x with the subsequent number of the client number (e.g for client 1 use 2)
+rename the device with mac address ending with "CC-CC" to "MessageDevice" and give it a static ip of  192.168.100.[x], netmask of 255.255.255.0 and default gateway to 192.168.100.1 ([x] replace x with the subsequent number of the client number (e.g for client 1 use 2)
 ```
-netsh interface ip set address name="!name!" static 192.168.100.[x] 255.255.255.0
+netsh interface ip set address name="!name!" static 192.168.100.[x] 255.255.255.0 192.168.100.1
 netsh interface set interface name="!name!" newname="MessageDevice"
 ```
 

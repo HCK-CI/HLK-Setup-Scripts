@@ -64,7 +64,7 @@ for /f "delims=" %%a in ('getmac /fo csv /nh /v') do (
         set mac=%%c
         if "!mac:~-9!"=="-01-CC-CC" (
             echo Setting static IP address to MessageDevice Network adapter..
-            netsh interface ip set address name="!name!" static 192.168.100.2 255.255.255.0
+            netsh interface ip set address name="!name!" static 192.168.100.2 255.255.255.0 192.168.100.1
             echo Renaming External Network adapter..
             netsh interface set interface name="!name!" newname="MessageDevice"
             echo Renaming hostname to CL1
@@ -72,7 +72,7 @@ for /f "delims=" %%a in ('getmac /fo csv /nh /v') do (
         )
         if "!mac:~-9!"=="-02-CC-CC" (
             echo Setting static IP address to MessageDevice Network adapter..
-            netsh interface ip set address name="!name!" static 192.168.100.3 255.255.255.0
+            netsh interface ip set address name="!name!" static 192.168.100.3 255.255.255.0 192.168.100.1
             echo Renaming MessageDevice Network adapter..
             netsh interface set interface name="!name!" newname="MessageDevice"
             echo Renaming hostname to CL2

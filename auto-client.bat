@@ -56,13 +56,13 @@ powercfg -change -disk-timeout-ac 0
 powercfg -change -standby-timeout-ac 0
 powercfg -hibernate off
 
-for /f "delims=" %%a in ('getmac /fo csv /nh /v') do (
+for /f "delims=" %%a in ('wmic nic Where "NetConnectionID is not null" get NetConnectionID^,macaddress /format:csv ^| find /v "Node"') do (
     set line=%%a
     set line=!line:"=,!
-    for /f "delims=,,, tokens=1,3" %%b in ("!line!") do (
-        set name=%%b
-        set mac=%%c
-        if "!mac:~-9!"=="-01-CC-CC" (
+    for /f "delims=,,, tokens=2,3" %%b in ("!line!") do (
+        set mac=%%b
+        set name=%%c
+        if "!mac:~-9!"==":01:CC:CC" (
             echo Setting static IP address to MessageDevice Network adapter..
             netsh interface ip set address name="!name!" static 192.168.100.2 255.255.255.0 192.168.100.1
             echo Renaming External Network adapter..
@@ -70,7 +70,7 @@ for /f "delims=" %%a in ('getmac /fo csv /nh /v') do (
             echo Renaming hostname to CL1
             WMIC ComputerSystem where Name="%computername%" call Rename Name="CL1"
         )
-        if "!mac:~-9!"=="-02-CC-CC" (
+        if "!mac:~-9!"==":02:CC:CC" (
             echo Setting static IP address to MessageDevice Network adapter..
             netsh interface ip set address name="!name!" static 192.168.100.3 255.255.255.0 192.168.100.1
             echo Renaming MessageDevice Network adapter..

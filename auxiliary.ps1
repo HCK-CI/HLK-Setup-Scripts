@@ -6,6 +6,11 @@ $HLKKITVER = 1809
 $REMOVEGUI = $false
 $DEBUG = $false
 $STAGEFILE = "$env:TEMP\current-stage.txt"
+$ARGSPATH = "$PSScriptRoot\args.ps1"
+
+if (Test-Path -Path "$ARGSPATH") {
+    . "$ARGSPATH"
+}
 
 function Execute-Command ($Path, $Arguments) {
     Write-Output "Execution $Path $Arguments"

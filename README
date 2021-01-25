@@ -72,7 +72,7 @@ This guide will help you set up and configure HLK/HCK test environment to be use
   - HLK-Setup-Scripts/Kits/HLK1809Setup.exe
   - HLK-Setup-Scripts/Kits/HLK1903Setup.exe
   - HLK-Setup-Scripts/Kits/HLK2004Setup.exe
-   
+
 4. Inside the images folder create a QEMU VM image for the Controller:
    ```
    qemu-img create -f qcow2 images/<KIT><HLK-VERSION>.qcow2 300G
@@ -83,41 +83,37 @@ This guide will help you set up and configure HLK/HCK test environment to be use
    qemu-img create -f qcow2 images/HLK1709.qcow2 500G
    ```
 
-5. Edit HLK-Setup-Scripts bat files:
-   update HLKKITVER in auto.bat and KIT (to HCK or HLK) both in auto.bat and auto_client.bat 
+5. Create HLK-Setup-Scripts args.ps1 file, set HLKKITVER and KITTYPE.
+   See args.ps1.example for example. You can redefine any variable from auxiliary.ps1
 
-6. Set a VirtHCK setup with the needed changes:
+6. Copy answer file templates from HLK-Setup-Scripts/answer-files to HLK-Setup-Scripts,
+   replace value in templates according to README and rename it to `*.xml`
+
+7. Create hlk-ci.iso with the next command:
+   ```
+   mkisofs -iso-level 4 -l -R -udf -D \
+      -o "/home/hck-ci/Isos/hlk-ci.iso" \
+      "/path/to/HLK-Setup-Scripts/"
+   ```
+
+8. Set a VirtHCK setup with the needed changes:
    for Windows 8.1 / Windows Server 2012R2 or earlier (HCK): prepare a Windows 2012 installation ISO
    for Windows 10 / Windows Server 2016 or newer (HLK): prepare a Windows 2012R2 installation ISO
    in the hck_setup.cfg file edit
-   set STUDIO_EXTRA to the ISO path: " -cdrom /home/hck-ci/Isos/WinIso.iso"
    Set UNSAFE_CACHE to on for faster VM installation.
 
-7. Run VirtHCK to install Windows controller:
+9. Run VirtHCK to install Windows controller and wait for shutdown:
    ```
-   sudo ./hck.sh ci_mode -st_image images/<KIT><HLK-VERSION>.qcow2 st
+   sudo ./hck.sh ci_mode -st_image images/<KIT><HLK-VERSION>.qcow2 \
+      -st_extra "-cdrom /home/hck-ci/Isos/WinIso.iso -drive file=/home/hck-ci/Isos/hlk-ci.iso,media=cdrom,readonly" st
    ```
 
-8. Activate smb share with "net use X: \\192.168.101.1\qemu"
-
-9. Copy the scripts folder from X:\ to C:\
-
-10. Run the scripts as administrator from the local path.
-   make sure the selected kit installation placed correctly
-   before running remove current.txt file from script folder if exists
-   The script will first try to find the offline installation and if not found will try to install the online.
-   Note: This might take a long time.
-
-11. Copy auto_client.bat file to the studio share
-
-12. Shutdown controller machine
-
-13. Create a snapshot image of the controller:
+10. Create a snapshot image of the controller:
    ```
    qemu-img create -f qcow2 -b images/HLK1803.qcow2 HLK1803-snapshot.qcow2
    ```
 
-14. Create two QEMU VM images for the HCK Clients with the following names:
+11. Create two QEMU VM images for the HCK Clients with the following names:
    ```
    qemu-img create -f qcow2 images/<KIT><HLK-VERSION>_C1_<OS_NAME><OS_ARCH>.qcow2 300G
    qemu-img create -f qcow2 images/<KIT><HLK-VERSION>_C2_<OS_NAME><OS_ARCH>.qcow2 300G
@@ -131,30 +127,26 @@ This guide will help you set up and configure HLK/HCK test environment to be use
    qemu-img create -f qcow2 images/HLK1803_C2_Win10x86.qcow2 300G
    ```
 
-15. Update VirtHCK hck_setup.cfg file with Iso file path:
+12. Repeat step 6, 7 with proper value for client Installation
+
+13. Run studio and clients machines in VirtHCK to install clients:
    ```
-   CDROM_CLIENT="/home/hck-ci/Prometheus/Isos/Win81x64.iso"
+   sudo ./hck.sh ci_mode -st_image images/HLK1803-snapshot.qcow2 st
+   sudo ./hck.sh ci_mode -c1_image images/HLK1803-C1-Win10x64.qcow2 \
+      -c1_extra "-cdrom /home/hck-ci/Isos/WinIso.iso -drive file=/home/hck-ci/Isos/hlk-ci.iso,media=cdrom,readonly" c1
+   sudo ./hck.sh ci_mode -c2_image images/HLK1803-C2-Win10x64.qcow2 \
+      -c2_extra "-cdrom /home/hck-ci/Isos/WinIso.iso -drive file=/home/hck-ci/Isos/hlk-ci.iso,media=cdrom,readonly" c2
    ```
 
-16. Run studio and clients machines in VirtHCK to install clients:
-   ```
-   sudo ./hck.sh ci_mode -st_image images/HCK-snapshot.qcow2 st
-   sudo ./hck.sh ci_mode -c1_image images/HLK1709-C1-Win10x64.qcow2 c1
-   sudo ./hck.sh ci_mode -c2_image images/HLK1709-C2-Win10x64.qcow2 c2
-   ```
-
-17. Install the Windows on the clients.
+14. Install the Windows on the clients.
     Windows server clients should be installed without GUI.
 
-18. Locate and copy auto_client.bat from the studio share, run it as administrator.
-   Make sure no current.txt exists with the auto_client.bat file before running.
+15. Shutdown all three machines.
 
-19. Shutdown all three machines.
-
-20. Delete the snapshot file and archive copies of the studio (if needed) and the two clients
+16. Delete the snapshot file and archive copies of the studio (if needed) and the two clients
 
 ## Scripts breakdown
-To manual installion or to understand what the  bat file does, follow this:
+To manual installation or to understand what the ps1 file does, follow this:
 
 ### steps for both studio and clients
 1. Disable Server manager popup on startup
@@ -285,4 +277,3 @@ shutdown -r -t 0
 4. Install HLK-Clients from the Studio smb share
 run \\STUDIO\HLKInstall\Client\setup.cmd for HLK
 or  \\STUDIO\HCKInstall\Client\setup.exe fro HCK
-

@@ -7,6 +7,7 @@ $REMOVEGUI = $false
 $DEBUG = $false
 $STAGEFILE = "$env:TEMP\current-stage.txt"
 $ARGSPATH = "$PSScriptRoot\args.ps1"
+$EXTRASOFTWAREDIRECTORY = "$PSScriptRoot\extra-software"
 
 if (Test-Path -Path "$ARGSPATH") {
     . "$ARGSPATH"

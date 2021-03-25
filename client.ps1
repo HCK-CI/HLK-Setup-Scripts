@@ -2,6 +2,7 @@ $ErrorActionPreference = "Stop"
 
 . "$PSScriptRoot\auxiliary.ps1"
 . "$PSScriptRoot\common.ps1"
+. "$PSScriptRoot\extra_software.ps1"
 
 function Stage-One {
     Set-NewStage -Stage "Two"
@@ -46,8 +47,15 @@ function Stage-One {
 }
 
 function Stage-Two {
-    Remove-Stage
-    Remove-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "install"
+    Set-NewStage -Stage "Three"
+
+    Install-ExtraSoftwareBeforeKit
+
+    Safe-Restart
+}
+
+function Stage-Three {
+    Set-NewStage -Stage "Four"
 
     Write-Output "Copying $KITTYPE client installation from studio to client..."
 
@@ -71,6 +79,15 @@ function Stage-Two {
     }
 
     Get-Service -Name "winrm"
+    Safe-Restart
+}
+
+function Stage-Four {
+    Remove-Stage
+    Remove-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "install"
+
+    Install-ExtraSoftwareAfterKit
+
     Safe-Shutdown
 }
 

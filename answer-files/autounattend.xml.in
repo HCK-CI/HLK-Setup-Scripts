@@ -50,7 +50,7 @@
             <UserData>
                 <AcceptEula>true</AcceptEula>
                 <ProductKey>
-                    <Key>@PRODUCT_KEY@</Key>
+                    @PRODUCT_KEY_XML@
                 </ProductKey>
             </UserData>
             <ImageInstall>

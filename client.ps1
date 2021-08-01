@@ -62,7 +62,7 @@ function Stage-Three {
     Write-Output "Copying $KITTYPE client installation from studio to client..."
 
     $clientInstallerFolder = "$env:TEMP\Client"
-    Copy-Item -Path "\\STUDIO\${KITTYPE}Install\Client" -Destination "$clientInstallerFolder" -Recurse
+    Copy-Item -Path "\\$STUDIOCOMPUTERNAME\${KITTYPE}Install\Client" -Destination "$clientInstallerFolder" -Recurse
 
     Write-Output "Starting $KITTYPE client installation..."
     # HLK Installer

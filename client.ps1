@@ -28,8 +28,8 @@ function Stage-One {
             Write-Output "Renaming hostname to $clientName"
             Rename-Computer -NewName "$clientName"
             Write-Output "Setting static IP address to MessageDevice Network adapter..."
-            New-NetIPAddress -InterfaceAlias "$adapterName" -IPAddress "192.168.100.$clientIp" `
-                -PrefixLength 24 -DefaultGateway "192.168.100.1"
+            New-NetIPAddress -InterfaceAlias "$adapterName" -IPAddress "${CONTROLNET}.${clientIp}" `
+                -PrefixLength 24 -DefaultGateway "$STUDIOIP"
             Write-Output "Renaming MessageDevice Network adapter..."
             Rename-NetAdapter -Name "$adapterName" -NewName "MessageDevice"
 

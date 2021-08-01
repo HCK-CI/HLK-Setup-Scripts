@@ -24,7 +24,7 @@ function Stage-One {
         switch ($lastMacSegment) {
             "CC" {
                 Write-Output "Setting static IP address to control Network adapter..."
-                New-NetIPAddress -InterfaceAlias $adapterName -IPAddress "192.168.100.1" -PrefixLength 24
+                New-NetIPAddress -InterfaceAlias $adapterName -IPAddress "$STUDIOIP" -PrefixLength 24
                 Write-Output "Renaming Control Network adapter..."
                 Rename-NetAdapter -Name "$adapterName" -NewName "Control"
                 Break
@@ -42,8 +42,8 @@ function Stage-One {
     }
 
     Write-Output "Adding clients Powershell remoting port proxy..."
-    Execute-Command -Path "netsh.exe" -Arguments "interface portproxy add v4tov4 listenport=4002 connectaddress=192.168.100.2 connectport=5985"
-    Execute-Command -Path "netsh.exe" -Arguments "interface portproxy add v4tov4 listenport=4003 connectaddress=192.168.100.3 connectport=5985"
+    Execute-Command -Path "netsh.exe" -Arguments "interface portproxy add v4tov4 listenport=4002 connectaddress=${CONTROLNET}.2 connectport=5985"
+    Execute-Command -Path "netsh.exe" -Arguments "interface portproxy add v4tov4 listenport=4003 connectaddress=${CONTROLNET}.3 connectport=5985"
 
     Enable-PowerShellRemoting
 

@@ -59,6 +59,14 @@ function Stage-Two {
 function Stage-Three {
     Set-NewStage -Stage "Four"
 
+    do {
+        Write-Output "Waiting for ping to $STUDIOCOMPUTERNAME..."
+        # The correct parameter is -ComputerName for PowerShell v5.1. The parameter changed to -TargetName in PowerShell v6.
+        # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.management/test-connection?view=powershell-7.1
+        # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.management/test-connection?view=powershell-5.1
+        $pingStatus = Test-Connection -ComputerName "$STUDIOCOMPUTERNAME" -Quiet
+    } until ($pingStatus)
+
     Write-Output "Copying $KITTYPE client installation from studio to client..."
 
     $clientInstallerFolder = "$env:TEMP\Client"

@@ -40,8 +40,12 @@ function Stage-One {
 
     "$STUDIOIP $STUDIOCOMPUTERNAME #STUDIO VM IP" |  Out-File -encoding ASCII -append 'C:\Windows\System32\drivers\etc\hosts'
 
-    Write-Output "Setting TestSigning on..."
-    Execute-Command -Path "bcdedit.exe" -Arguments "/set testsigning on"
+    if (Confirm-SecureBootUEFI) {
+        Write-Output "Secure boot enabled, skipping TestSigning on..."
+    } else {
+        Write-Output "Setting TestSigning on..."
+        Execute-Command -Path "bcdedit.exe" -Arguments "/set testsigning on"
+    }
 
     Enable-PowerShellRemoting
 

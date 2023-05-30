@@ -55,7 +55,7 @@ function Stage-One {
 function Stage-Two {
     Set-NewStage -Stage "Three"
 
-    Install-ExtraSoftwareBeforeKit
+    Install-ClientExtraSoftwareBeforeKit
 
     Safe-Restart
 }
@@ -100,7 +100,7 @@ function Stage-Four {
     Remove-Stage
     Remove-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "install"
 
-    Install-ExtraSoftwareAfterKit
+    Install-ClientExtraSoftwareAfterKit
 
     Safe-Shutdown
 }

@@ -38,25 +38,25 @@ function Install-ExtraSoftware {
     Execute-Command -Path "$($Config.install_cmd)" -Arguments "$arguments"
 }
 
-function Install-ExtraSoftwareBeforeKit {
+function Install-ClientExtraSoftwareBeforeKit {
     Write-Output "Installing extra software before kit installation"
 
     Get-ChildItem -Path "$EXTRASOFTWAREDIRECTORY" -Directory | ForEach-Object {
         $config = Get-ExtraSoftwareConfig -Directory "$($_.FullName)"
 
-        if ($config.install_time.kit -eq 'before') {
+        if ($config.install_dest -eq 'client' -And $config.install_time.kit -eq 'before') {
             Install-ExtraSoftware -Config $config -Path "$($_.FullName)"
         }
     }
 }
 
-function Install-ExtraSoftwareAfterKit {
+function Install-ClientExtraSoftwareAfterKit {
     Write-Output "Installing extra software after kit installation"
 
     Get-ChildItem -Path "$EXTRASOFTWAREDIRECTORY" -Directory | ForEach-Object {
         $config = Get-ExtraSoftwareConfig -Directory "$($_.FullName)"
 
-        if ($config.install_time.kit -eq 'after') {
+        if ($config.install_dest -eq 'client' -And $config.install_time.kit -eq 'after') {
             Install-ExtraSoftware -Config $config -Path "$($_.FullName)"
         }
     }

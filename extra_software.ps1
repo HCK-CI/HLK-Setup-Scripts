@@ -7,7 +7,8 @@ function Get-ExtraSoftwareConfig {
 
     if ($KITTYPE -eq 'HCK') {
         $full_kit = "${KITTYPE}".ToLower()
-    } else {
+    }
+    else {
         $full_kit = "${KITTYPE}${HLKKITVER}".ToLower()
     }
 
@@ -30,9 +31,9 @@ function Install-ExtraSoftware {
     Write-Output "Processing: $Config"
 
     $arguments = $Config.install_args. `
-                Replace('@sw_path@', $Path). `
-                Replace('@file_name@', $Config.file_name). `
-                Replace('@temp@', ${env:TEMP})
+        Replace('@sw_path@', $Path). `
+        Replace('@file_name@', $Config.file_name). `
+        Replace('@temp@', ${env:TEMP})
 
     Execute-Command -Path "$($Config.install_cmd)" -Arguments "$arguments"
 }

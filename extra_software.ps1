@@ -61,3 +61,27 @@ function Install-ClientExtraSoftwareAfterKit {
         }
     }
 }
+
+function Install-StudioExtraSoftwareBeforeKit {
+    Write-Output "Installing extra software before kit installation"
+
+    Get-ChildItem -Path "$EXTRASOFTWAREDIRECTORY" -Directory | ForEach-Object {
+        $config = Get-ExtraSoftwareConfig -Directory "$($_.FullName)"
+
+        if ($config.install_dest -eq 'studio' -And $config.install_time.kit -eq 'before') {
+            Install-ExtraSoftware -Config $config -Path "$($_.FullName)"
+        }
+    }
+}
+
+function Install-StudioExtraSoftwareAfterKit {
+    Write-Output "Installing extra software after kit installation"
+
+    Get-ChildItem -Path "$EXTRASOFTWAREDIRECTORY" -Directory | ForEach-Object {
+        $config = Get-ExtraSoftwareConfig -Directory "$($_.FullName)"
+
+        if ($config.install_dest -eq 'studio' -And $config.install_time.kit -eq 'after') {
+            Install-ExtraSoftware -Config $config -Path "$($_.FullName)"
+        }
+    }
+}

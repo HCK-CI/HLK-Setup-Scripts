@@ -2,6 +2,7 @@ $ErrorActionPreference = "Stop"
 
 . "$PSScriptRoot\auxiliary.ps1"
 . "$PSScriptRoot\common.ps1"
+. "$PSScriptRoot\extra_software.ps1"
 
 function Stage-One {
     Set-NewStage -Stage "Two"
@@ -53,6 +54,14 @@ function Stage-One {
 function Stage-Two {
     Set-NewStage -Stage "Three"
 
+    Install-StudioExtraSoftwareBeforeKit
+
+    Safe-Restart
+}
+
+function Stage-Three {
+    Set-NewStage -Stage "Four"
+
     Write-Output "Installing $KITTYPE, this might take a while..."
     $kitPath = ""
     $kitArgs = "/q"
@@ -81,9 +90,8 @@ function Stage-Two {
     Safe-Restart
 }
 
-function Stage-Three {
-    Remove-Stage
-    Remove-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "install"
+function Stage-Four {
+    Set-NewStage -Stage "Five"
 
     Write-Output "Downloading and updating Filters..."
     if (!(Test-Path -Path "$env:DTMBIN")) {
@@ -102,6 +110,15 @@ function Stage-Three {
 
     Get-Service -Name "winrm"
     Write-Output "$env:DTMBIN"
+
+    Safe-Restart
+}
+
+function Stage-Five {
+    Remove-Stage
+    Remove-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "install"
+
+    Install-StudioExtraSoftwareAfterKit
 
     Safe-Shutdown
 }

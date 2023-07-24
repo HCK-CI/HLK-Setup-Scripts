@@ -27,7 +27,7 @@
             </UserAccounts>
             <FirstLogonCommands>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" /v "install" /d "powershell.exe -ExecutionPolicy ByPass -File D:\@HOST_TYPE@.ps1" /f</CommandLine>
+                    <CommandLine>cmd /c for %i in (a b c d e f g h i j k l m n o p q r s t u v w x y z) do if exist %i:\@HOST_TYPE@.ps1 reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" /v "install" /d "powershell.exe -ExecutionPolicy ByPass -File %i:\@HOST_TYPE@.ps1" /f</CommandLine>
                     <Description>Install all deps</Description>
                     <Order>1</Order>
                     <RequiresUserInput>true</RequiresUserInput>

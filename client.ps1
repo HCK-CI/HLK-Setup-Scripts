@@ -40,31 +40,16 @@ function Stage-One {
 
     "$STUDIOIP $STUDIOCOMPUTERNAME #STUDIO VM IP" |  Out-File -encoding ASCII -append 'C:\Windows\System32\drivers\etc\hosts'
 
-    if ($env:FIRMWARE_TYPE -eq 'UEFI') {
-        try {
-            if (Confirm-SecureBootUEFI) {
-                Write-Output "Secure boot enabled, skipping TestSigning on..."
-            } else {
-                Write-Output "Setting TestSigning on..."
-                Execute-Command -Path "bcdedit.exe" -Arguments "/set testsigning on"
-            }
-        } catch {
-            Write-Output "Confirm-SecureBootUEFI crashed, secure boot is not enabled"
-            Write-Output "Setting TestSigning on..."
-            Execute-Command -Path "bcdedit.exe" -Arguments "/set testsigning on"
-        }
-    } else {
-        Write-Output "FIRMWARE_TYPE is not UEFI, Secure boot can't be enabled, setting TestSigning on..."
-        Execute-Command -Path "bcdedit.exe" -Arguments "/set testsigning on"
-    }
-
     Enable-PowerShellRemoting
 
-    Safe-Restart
+    Safe-Shutdown
 }
 
 function Stage-Two {
     Set-NewStage -Stage "Three"
+
+    Write-Output "Setting TestSigning on..."
+    Execute-Command -Path "bcdedit.exe" -Arguments "/set testsigning on"
 
     Install-ClientExtraSoftwareBeforeKit
 

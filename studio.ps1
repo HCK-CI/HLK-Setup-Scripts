@@ -63,14 +63,25 @@ function Stage-Three {
     Set-NewStage -Stage "Four"
 
     Write-Output "Installing $KITTYPE, this might take a while..."
-    $kitPath = ""
+    $kitPath = $null
     $kitArgs = "/q"
 
     if ($KITTYPE -eq "HLK") {
-        if (Test-Path -Path "$PSScriptRoot\Kits\HLK${HLKKITVER}\HLKSetup.exe") {
-            $kitPath = "$PSScriptRoot\Kits\HLK${HLKKITVER}\HLKSetup.exe"
-        } else {
-            $kitPath = "$PSScriptRoot\Kits\HLK${HLKKITVER}Setup.exe"
+        $disks = Get-WmiObject -Class Win32_LogicalDisk 
+        foreach ($disk in ($disks | Where-Object { $_.DriveType -eq 5 })) {
+            $kitPathInDisk = Join-Path -Path $disk.DeviceID -ChildPath "HLKSetup.exe"
+            if (Test-Path -Path $kitPathInDisk) {
+                $kitPath = $kitPathInDisk
+                break
+            }
+        }
+
+        if ($kitPath -eq $null) {
+            if (Test-Path -Path "$PSScriptRoot\Kits\HLK${HLKKITVER}\HLKSetup.exe") {
+                $kitPath = "$PSScriptRoot\Kits\HLK${HLKKITVER}\HLKSetup.exe"
+            } else {
+                $kitPath = "$PSScriptRoot\Kits\HLK${HLKKITVER}Setup.exe"
+            }
         }
     } else {
         if (Test-Path -Path "%~dp0Kits\HCK\HCKSetup.exe") {

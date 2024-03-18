@@ -63,24 +63,36 @@ function Stage-Three {
     Set-NewStage -Stage "Four"
 
     Write-Output "Installing $KITTYPE, this might take a while..."
-    $kitPath = ""
+    $kitPathInDisk = $null
     $kitArgs = "/q"
-
     if ($KITTYPE -eq "HLK") {
-        if (Test-Path -Path "$PSScriptRoot\Kits\HLK${HLKKITVER}\HLKSetup.exe") {
-            $kitPath = "$PSScriptRoot\Kits\HLK${HLKKITVER}\HLKSetup.exe"
-        } else {
-            $kitPath = "$PSScriptRoot\Kits\HLK${HLKKITVER}Setup.exe"
+        $disks = Get-WmiObject -Class Win32_LogicalDisk 
+        foreach ($disk in ($disks | Where-Object { $_.DriveType -eq 5 })) {
+            $hckSetupPath = Join-Path -Path $disk.DeviceID -ChildPath "HLKSetup.exe"
+            if (Test-Path -Path $hckSetupPath) {
+                $kitPathInDisk = $hckSetupPath
+                $foundHCK = $true
+                break
+            }
         }
+
+        if ($kitPathInDisk -eq $null) {
+            if (Test-Path -Path "$PSScriptRoot\Kits\HLK${HLKKITVER}\HLKSetup.exe") {
+                $kitPathInDisk = "$PSScriptRoot\Kits\HLK${HLKKITVER}\HLKSetup.exe"
+            } else {
+                $kitPathInDisk = "$PSScriptRoot\Kits\HLK${HLKKITVER}Setup.exe"
+            }
+        }
+
     } else {
         if (Test-Path -Path "%~dp0Kits\HCK\HCKSetup.exe") {
-            $kitPath = "$PSScriptRoot\Kits\HCK\Setup.exe"
+            $kitPathInDisk = "$PSScriptRoot\Kits\HCK\Setup.exe"
         } else {
-            $kitPath = "$PSScriptRoot\Kits\HCKSetup.exe"
+            $kitPathInDisk = "$PSScriptRoot\Kits\HCKSetup.exe"
         }
     }
 
-    Execute-Command -Path "$kitPath" -Arguments "$kitArgs"
+    Execute-Command -Path "$kitPathInDisk" -Arguments "$kitArgs"
     Write-Output "$KITTYPE Studio setup has finished..."
 
     if ($REMOVEGUI -eq $TRUE) {

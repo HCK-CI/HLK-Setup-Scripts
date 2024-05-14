@@ -7,6 +7,7 @@ $ErrorActionPreference = "Stop"
 function Stage-One {
     Set-NewStage -Stage "Two"
 
+    Allow-InsecureGuestAuth
     Disable-ServerManagerStartupPopup
     Disable-WindowsFirewall
     Set-UnidentifiedNetworksToPrivateLocation

@@ -1,6 +1,10 @@
 
 . "$PSScriptRoot\auxiliary.ps1"
 
+function Allow-InsecureGuestAuth {
+    Set-Registry -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" -Name "AllowInsecureGuestAuth" -Type DWord -Value 1
+}
+
 function Disable-ServerManagerStartupPopup {
     Write-Output "Disabling Server Manager popup on startup..."
     Set-Registry -Path "HKLM:\SOFTWARE\Microsoft\ServerManager" -Name "DoNotOpenServerManagerAtLogon" `

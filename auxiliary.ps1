@@ -98,7 +98,8 @@ function Set-Registry {
     param (
         $Path,
         $Name,
-        $Value
+        $Value,
+        $Type
     )
 
     if (Test-Path "$Path") {

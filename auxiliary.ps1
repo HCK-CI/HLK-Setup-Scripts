@@ -26,22 +26,38 @@ function Execute-Command ($Path, $Arguments) {
     $pinfo.Arguments = "$Arguments"
     $p = New-Object System.Diagnostics.Process
     $p.StartInfo = $pinfo
-    $p.Start() | Out-Null
-    $p.WaitForExit()
 
-    $stdout = $p.StandardOutput.ReadToEnd().Trim()
-    $stderr = $p.StandardError.ReadToEnd().Trim()
+    $OutEvent = Register-ObjectEvent -Action {
+        Write-Output $Event.SourceEventArgs.Data
+    } -InputObject $p -EventName "OutputDataReceived"
+    $ErrEvent = Register-ObjectEvent -Action {
+        Write-Output $Event.SourceEventArgs.Data
+    } -InputObject $p -EventName "ErrorDataReceived"
+
+    $p.Start()
+    $p.BeginOutputReadLine()
+    $p.BeginErrorReadLine()
+
+    # Do not think about calling WaitForExit on the process,
+    # because then no output is generated until the process
+    # has finished
+    do
+    {
+        Write-Output 'Waiting for process to finish...'
+        Start-Sleep -Seconds 1
+    }
+    while (!$p.HasExited)
 
     if ($p.ExitCode -ne 0) {
-        Write-Error "$stdout`n$stderr"
+       Write-Error "Process exited with code $($p.ExitCode)"
     } else {
-        if ($stdout.Length -gt 0) {
-            Write-Output "$stdout"
-        }
-        if ($stderr.Length -gt 0) {
-            Write-Output "$stderr"
-        }
+       Write-Output "Process exited successfully"
     }
+
+    $OutEvent.Name, $ErrEvent.Name |
+    ForEach-Object {Unregister-Event -SourceIdentifier $_}
+
+    Write-Output "Execution finished"
 }
 
 function Set-NewStage() {

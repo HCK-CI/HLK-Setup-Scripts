@@ -4,6 +4,13 @@ $ErrorActionPreference = "Stop"
 . "$PSScriptRoot\common.ps1"
 . "$PSScriptRoot\extra_software.ps1"
 
+function Configure-TimeSync {
+    Write-Output "Configuring Client VM to synchronize time with Studio VM..."
+    Execute-Command -Path "w32tm.exe" -Arguments "/config /manualpeerlist:$STUDIOIP /syncfromflags:manual /reliable:NO /largephaseoffset:0 /update"
+
+    Set-Service -Name w32time -StartupType Automatic
+}
+
 function Stage-One {
     Set-NewStage -Stage "Two"
 
@@ -48,6 +55,8 @@ function Stage-One {
 
 function Stage-Two {
     Set-NewStage -Stage "Three"
+
+    Configure-TimeSync 
 
     Write-Output "Setting TestSigning on..."
     Execute-Command -Path "bcdedit.exe" -Arguments "/set testsigning on"

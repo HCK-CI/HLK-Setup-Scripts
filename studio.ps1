@@ -4,6 +4,13 @@ $ErrorActionPreference = "Stop"
 . "$PSScriptRoot\common.ps1"
 . "$PSScriptRoot\extra_software.ps1"
 
+function Enable-NtpServer {
+    Write-Output "Enabling NTP Server on Studio VM..."
+    Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\TimeProviders\NtpServer' -Name 'Enabled' -Value 1
+    Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Config' -Name 'AnnounceFlags' -Value 5
+    Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters' -Name 'Type' -Value 'NTP'
+}
+
 function Stage-One {
     Set-NewStage -Stage "Two"
 
@@ -48,6 +55,7 @@ function Stage-One {
     Execute-Command -Path "netsh.exe" -Arguments "interface portproxy add v4tov4 listenport=4003 connectaddress=${CONTROLNET}.3 connectport=5985"
 
     Enable-PowerShellRemoting
+    Enable-NtpServer
 
     Safe-Restart
 }

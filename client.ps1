@@ -6,6 +6,7 @@ $ErrorActionPreference = "Stop"
 
 function Configure-TimeSync {
     Write-Output "Configuring Client VM to synchronize time with Studio VM..."
+    Start-Service -Name w32time
     Execute-Command -Path "w32tm.exe" -Arguments "/config /manualpeerlist:$STUDIOIP /syncfromflags:manual /reliable:NO /largephaseoffset:0 /update"
 
     Set-Service -Name w32time -StartupType Automatic

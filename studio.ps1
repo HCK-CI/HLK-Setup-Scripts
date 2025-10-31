@@ -57,6 +57,10 @@ function Stage-One {
     Enable-PowerShellRemoting
     Enable-NtpServer
 
+    if ($ENABLERDP) {
+        Enable-RemoteDesktop
+    }
+
     Safe-Restart
 }
 

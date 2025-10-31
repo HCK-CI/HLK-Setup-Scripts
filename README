@@ -145,6 +145,15 @@ del UpdateFilters.sql
 popd
 ```
 
+7. Enable RemoteDesktop
+```
+Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 0 -Type DWord
+Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "UserAuthentication" -Value 0 -Type DWord
+Set-Service -Name "TermService" -StartupType Automatic
+Start-Service -Name "TermService" -ErrorAction SilentlyContinue
+```
+
+
 ## Steps only on clients
 
 1. rename computer name to "CL1" or "CL2"

@@ -56,6 +56,22 @@ function Enable-PowerShellRemoting {
     Execute-Command -Path 'C:\Windows\System32\winrm.cmd' -Arguments 'set winrm/config/service "@{AllowUnencrypted="true"}"'
 }
 
+function Enable-RemoteDesktop {
+    Write-Output "Enabling Remote Desktop..."
+    # Enable Remote Desktop connections.
+    Set-Registry -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Type DWord -Value 0
+
+    # Disable Network Level Authentication (NLA) for compatibility with clients like 'rdesktop'.
+    # WARNING: This is less secure and exposes the server to pre-authentication attacks.
+    Set-Registry -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "UserAuthentication" -Type DWord -Value 0
+
+    # Ensure Remote Desktop service is running
+    Set-Service -Name "TermService" -StartupType Automatic
+    Start-Service -Name "TermService" -ErrorAction SilentlyContinue
+
+    Write-Output "Remote Desktop has been enabled"
+}
+
 function Remove-WindowsGUI {
     Write-Output "Removing windows GUI..."
     Remove-WindowsFeature Server-Gui-Shell, Server-Gui-Mgmt-Infra

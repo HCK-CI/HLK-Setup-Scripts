@@ -65,6 +65,9 @@ function Enable-RemoteDesktop {
     # WARNING: This is less secure and exposes the server to pre-authentication attacks.
     Set-Registry -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "UserAuthentication" -Type DWord -Value 0
 
+    # Enable multiple sessions for single user
+    Set-Registry -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fSingleSessionPerUser" -Type DWord -Value 0
+
     # Ensure Remote Desktop service is running
     Set-Service -Name "TermService" -StartupType Automatic
     Start-Service -Name "TermService" -ErrorAction SilentlyContinue

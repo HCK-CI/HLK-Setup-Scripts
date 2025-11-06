@@ -8,7 +8,7 @@ $HLKKITVER = 1809
 $REMOVEGUI = $false
 $DEBUG = $false
 $ENABLERDP = $true
-$STAGEFILE = "$env:TEMP\current-stage.txt"
+$STAGEFILE = "$env:ProgramData\HLK-setup-stage.txt"
 $ARGSPATH = "$PSScriptRoot\args.ps1"
 $EXTRASOFTWAREDIRECTORY = "$PSScriptRoot\extra-software"
 

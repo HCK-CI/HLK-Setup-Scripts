@@ -3,3 +3,4 @@ $HLKKITVER = 2004
 $REMOVEGUI = $false
 $DEBUG = $false
 $ENABLERDP = $true
+$DEFAULTPASSWORD = "Assentor01"

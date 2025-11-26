@@ -75,6 +75,45 @@ function Enable-RemoteDesktop {
     Write-Output "Remote Desktop has been enabled"
 }
 
+function Disable-UserAccountControl {
+    Write-Output "Disabling User Account Control (UAC)..."
+
+    # Disable UAC by setting EnableLUA to 0
+    Set-Registry -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
+        -Name "EnableLUA" -Type DWord -Value 0
+
+    # Set FilterAdministratorToken to 0 to disable UAC for built-in administrator
+    Set-Registry -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
+        -Name "FilterAdministratorToken" -Type DWord -Value 0
+
+    Write-Output "UAC has been disabled. A restart is required for changes to take effect."
+}
+
+function Configure-CrashControl {
+    Write-Output "Configuring crash control settings..."
+
+    # Enable NMI crash dump (allows triggering crash dumps via NMI)
+    Set-Registry -Path "HKLM:\SYSTEM\CurrentControlSet\Control\CrashControl" `
+        -Name "NMICrashDump" -Type DWord -Value 1
+
+    # Set crash dump to kernel memory dump (value 2)
+    Set-Registry -Path "HKLM:\SYSTEM\CurrentControlSet\Control\CrashControl" `
+        -Name "CrashDumpEnabled" -Type DWord -Value 2
+
+    # Configure AutoReboot setting based on no_reboot_after_bugcheck parameter
+    if ($NOREBOOTAFTERBUGCHECK -eq $TRUE) {
+        Write-Output "Disabling automatic reboot after crash (keeps the system in crashed state for debugging)"
+        Set-Registry -Path "HKLM:\SYSTEM\CurrentControlSet\Control\CrashControl" `
+            -Name "AutoReboot" -Type DWord -Value 0
+    } else {
+        Write-Output "Enabling automatic reboot after crash (default behavior)"
+        Set-Registry -Path "HKLM:\SYSTEM\CurrentControlSet\Control\CrashControl" `
+            -Name "AutoReboot" -Type DWord -Value 1
+    }
+
+    Write-Output "Crash control settings have been configured."
+}
+
 function Remove-WindowsGUI {
     Write-Output "Removing windows GUI..."
     Remove-WindowsFeature Server-Gui-Shell, Server-Gui-Mgmt-Infra

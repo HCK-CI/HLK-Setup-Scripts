@@ -22,6 +22,8 @@ function Stage-One {
     Disable-WindowsUpdate
     Disable-Screensaver
     Disable-PowerSavingOptions
+    Disable-UserAccountControl
+    Configure-CrashControl
 
     Get-NetAdapter | ForEach-Object {
         $adapterName = $_.Name
